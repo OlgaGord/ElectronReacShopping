@@ -80,6 +80,10 @@ const mainMenuTemplate = [
           })
 
           addWindow.loadFile('addWindow.html')
+          // Garbage remove
+          addWindow.on('close', () => {
+            addWindow = null;
+          })
         }
       },
       {
@@ -95,4 +99,24 @@ const mainMenuTemplate = [
     ]
   }
 ]
+
+if (process.env.NODE_ENV !== 'production') {
+
+  mainMenuTemplate.push({
+    label: "Developer Tools",
+    submenu: [
+      {
+        label: 'Toggle tools',
+        accelerator: process.platform == 'darwin' ? 'Command+I' : 'Ctrl+I',
+        click(item, focusedWindow) {
+          focusedWindow.toggleDevTools();
+
+        }
+      },
+      {
+        role: 'reload'
+      }
+    ]
+  })
+}
 
