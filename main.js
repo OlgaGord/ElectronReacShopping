@@ -1,6 +1,8 @@
 // Modules to control application life and create native browser window
-const { app, BrowserWindow } = require('electron')
-const path = require('path')
+const { app, BrowserWindow, Menu } = require('electron');
+const url = require('url');
+const path = require('path');
+
 
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
@@ -14,7 +16,12 @@ function createWindow() {
     webPreferences: {
       preload: path.join(__dirname, 'preload.js')
     }
-  })
+  });
+
+
+  const mainMenu = Menu.buildFromTemplate(mainMenuTemplate);
+  Menu.setApplicationMenu(mainMenu);
+
 
   // and load the index.html of the app.
   mainWindow.loadFile('index.html')
@@ -29,7 +36,7 @@ function createWindow() {
     // when you should delete the corresponding element.
     mainWindow = null
   })
-}
+};
 
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.
@@ -49,4 +56,24 @@ app.on('activate', function () {
   if (mainWindow === null) createWindow()
 })
 
+const mainMenuTemplate = [
+
+  {
+    label: 'File',
+    submenu: [
+      {
+        label: 'Add Ittem'
+      },
+      {
+        label: 'Clear Items'
+      },
+      {
+        label: 'Quit',
+        click() {
+          app.quit();
+        }
+      }
+    ]
+  }
+]
 
