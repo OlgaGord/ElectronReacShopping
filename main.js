@@ -6,7 +6,8 @@ const path = require('path');
 
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
-let mainWindow
+let mainWindow;
+let addWindow;
 
 function createWindow() {
   // Create the browser window.
@@ -22,9 +23,11 @@ function createWindow() {
   const mainMenu = Menu.buildFromTemplate(mainMenuTemplate);
   Menu.setApplicationMenu(mainMenu);
 
-
   // and load the index.html of the app.
   mainWindow.loadFile('index.html')
+  mainWindow.on('closed', () => {
+    app.quit();
+  });
 
   // Open the DevTools.
   // mainWindow.webContents.openDevTools()
@@ -41,7 +44,10 @@ function createWindow() {
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.
 // Some APIs can only be used after this event occurs.
-app.on('ready', createWindow)
+app.on('ready', () => {
+  createWindow();
+
+})
 
 // Quit when all windows are closed.
 app.on('window-all-closed', function () {
@@ -62,13 +68,26 @@ const mainMenuTemplate = [
     label: 'File',
     submenu: [
       {
-        label: 'Add Ittem'
+        label: 'Add Ittem',
+        click: () => {
+          addWindow = new BrowserWindow({
+            width: 200,
+            height: 200,
+            title: 'Add Shopping Item',
+            webPreferences: {
+              preload: path.join(__dirname, 'preload.js')
+            }
+          })
+
+          addWindow.loadFile('addWindow.html')
+        }
       },
       {
         label: 'Clear Items'
       },
       {
         label: 'Quit',
+        accelerator: process.platform == 'darwin' ? 'Command+Q' : 'Ctrl+Q',
         click() {
           app.quit();
         }
