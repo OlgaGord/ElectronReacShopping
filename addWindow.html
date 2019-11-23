@@ -7,9 +7,24 @@
     <form>
       <div>
         <label>Enter Item</label>
-        <input type="text" id="item" autofocus
+        <input type="text" id="shoppingItem" autofocus
       </div>
       <button type="submit">Add item</button>
     </form>
+    <script>
+      const electron = require("electron");
+      const { ipcRenderer } = electron;
+
+      const addform = document.querySelector("form");
+
+      const submitAddForm = e => {
+        e.preventDefault();
+        // console.log("hello add item");
+        const item = document.querySelector("#shoppingItem").value;
+        ipcRenderer.send("item:add", item);
+      };
+
+      addform.addEventListener("submit", submitAddForm);
+    </script>
   </body>
 </html>

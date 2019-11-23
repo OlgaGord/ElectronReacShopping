@@ -1,5 +1,5 @@
 // Modules to control application life and create native browser window
-const { app, BrowserWindow, Menu } = require('electron');
+const { app, BrowserWindow, Menu, ipcMain } = require('electron');
 const url = require('url');
 const path = require('path');
 
@@ -15,7 +15,8 @@ function createWindow() {
     width: 800,
     height: 600,
     webPreferences: {
-      preload: path.join(__dirname, 'preload.js')
+      preload: path.join(__dirname, 'preload.js'),
+      nodeIntegration: true
     }
   });
 
@@ -62,8 +63,9 @@ app.on('activate', function () {
   if (mainWindow === null) createWindow()
 })
 
-const mainMenuTemplate = [
 
+
+const mainMenuTemplate = [
   {
     label: 'File',
     submenu: [
@@ -75,15 +77,26 @@ const mainMenuTemplate = [
             height: 200,
             title: 'Add Shopping Item',
             webPreferences: {
-              preload: path.join(__dirname, 'preload.js')
+              preload: path.join(__dirname, 'preload.js'),
+              nodeIntegration: true
+
             }
           })
 
           addWindow.loadFile('addWindow.html')
+
           // Garbage remove
           addWindow.on('close', () => {
             addWindow = null;
           })
+
+          ipcMain.on('item:add', (e, item) => {
+            console.log(item);
+            mainWindow.webContents.send('item:add', item);
+            addWindow.close();
+
+          })
+
         }
       },
       {
@@ -98,7 +111,11 @@ const mainMenuTemplate = [
       }
     ]
   }
-]
+];
+//add empty object to the menu (to remove Electron title)
+if (process.platform == 'darwin') {
+  mainMenuTemplate.unshift({});
+}
 
 if (process.env.NODE_ENV !== 'production') {
 
