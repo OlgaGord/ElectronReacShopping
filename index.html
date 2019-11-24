@@ -12,11 +12,18 @@
       const { ipcRenderer } = electron;
       const ulShopping = document.querySelector("ul");
 
+      //add Item
+
       ipcRenderer.on("item:add", (e, item) => {
         const liShopping = document.createElement("li");
         const itemText = document.createTextNode(item);
         liShopping.appendChild(itemText);
         ulShopping.appendChild(liShopping);
+      });
+
+      //clear item
+      ipcRenderer.on("item:clear", () => {
+        ulShopping.innerHTML = "";
       });
     </script>
     <script src="./renderer.js"></script>

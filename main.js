@@ -9,98 +9,69 @@ const path = require('path');
 let mainWindow;
 let addWindow;
 
-function createWindow() {
-  // Create the browser window.
+app.on('ready', () => {
   mainWindow = new BrowserWindow({
-    width: 800,
-    height: 600,
     webPreferences: {
-      preload: path.join(__dirname, 'preload.js'),
       nodeIntegration: true
     }
   });
 
+  mainWindow.loadURL(url.format({
+    pathname: path.join(__dirname, 'index.html'),
+    protocol: 'file:',
+    slashes: true
+  }));
 
   const mainMenu = Menu.buildFromTemplate(mainMenuTemplate);
   Menu.setApplicationMenu(mainMenu);
-
-  // and load the index.html of the app.
-  mainWindow.loadFile('index.html')
   mainWindow.on('closed', () => {
     app.quit();
   });
 
-  // Open the DevTools.
-  // mainWindow.webContents.openDevTools()
+});
 
-  // Emitted when the window is closed.
-  mainWindow.on('closed', function () {
-    // Dereference the window object, usually you would store windows
-    // in an array if your app supports multi windows, this is the time
-    // when you should delete the corresponding element.
-    mainWindow = null
-  })
-};
-
-// This method will be called when Electron has finished
-// initialization and is ready to create browser windows.
-// Some APIs can only be used after this event occurs.
-app.on('ready', () => {
-  createWindow();
-
-})
-
-// Quit when all windows are closed.
-app.on('window-all-closed', function () {
-  // On macOS it is common for applications and their menu bar
-  // to stay active until the user quits explicitly with Cmd + Q
-  if (process.platform !== 'darwin') app.quit()
-})
-
-app.on('activate', function () {
-  // On macOS it's common to re-create a window in the app when the
-  // dock icon is clicked and there are no other windows open.
-  if (mainWindow === null) createWindow()
-})
-
-
+const createAddWindow = () => {
+  addWindow = new BrowserWindow({
+    width: 200,
+    height: 200,
+    title: 'Add Shopping Item',
+    webPreferences: {
+      nodeIntegration: true
+    }
+  });
+  addWindow.loadURL(url.format({
+    pathname: path.join(__dirname, 'addWindow.html'),
+    protocol: 'file:',
+    slashes: true
+  }));
+}
 
 const mainMenuTemplate = [
   {
     label: 'File',
     submenu: [
       {
-        label: 'Add Ittem',
+        label: 'Add Item',
         click: () => {
-          addWindow = new BrowserWindow({
-            width: 200,
-            height: 200,
-            title: 'Add Shopping Item',
-            webPreferences: {
-              preload: path.join(__dirname, 'preload.js'),
-              nodeIntegration: true
+          createAddWindow();
+          // addWindow.on('close', () => {
+          //   addWindow = null;
+          // })
+          ipcMain.on('item:add', (e, item) => {
+            mainWindow.webContents.send('item:add', item);
+            // addWindow.close();
 
-            }
-          })
-
-          addWindow.loadFile('addWindow.html')
+          });
 
           // Garbage remove
-          addWindow.on('close', () => {
-            addWindow = null;
-          })
-
-          ipcMain.on('item:add', (e, item) => {
-            console.log(item);
-            mainWindow.webContents.send('item:add', item);
-            addWindow.close();
-
-          })
-
+          // 
         }
       },
       {
-        label: 'Clear Items'
+        label: 'Clear Items',
+        click() {
+          mainWindow.webContents.send('item:clear');
+        }
       },
       {
         label: 'Quit',
