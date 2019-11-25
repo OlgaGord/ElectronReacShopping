@@ -14,7 +14,7 @@
     <nav class="nav-wrapper">
       <h2 class="text-center">Shopping List</h2>
     </nav>
-    <ul></ul>
+    <ul class="list-group ml-2 mr-2"></ul>
     <script>
       const electron = require("electron");
       const { ipcRenderer } = electron;
@@ -24,6 +24,7 @@
 
       ipcRenderer.on("item:add", (e, item) => {
         const liShopping = document.createElement("li");
+        liShopping.classList.add("list-group-item-success");
         const itemText = document.createTextNode(item);
         liShopping.appendChild(itemText);
         ulShopping.appendChild(liShopping);
