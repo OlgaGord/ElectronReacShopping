@@ -3,9 +3,6 @@ const { app, BrowserWindow, Menu, ipcMain } = require('electron');
 const url = require('url');
 const path = require('path');
 
-
-// Keep a global reference of the window object, if you don't, the window will
-// be closed automatically when the JavaScript object is garbage collected.
 let mainWindow;
 let addWindow;
 
@@ -44,8 +41,16 @@ const createAddWindow = () => {
     protocol: 'file:',
     slashes: true
   }));
-}
 
+  addWindow.on('close', () => {
+    addWindow = null;
+  })
+
+}
+ipcMain.on('item:add', (e, item) => {
+  mainWindow.webContents.send('item:add', item);
+  addWindow.close();
+});
 const mainMenuTemplate = [
   {
     label: 'File',
@@ -54,17 +59,7 @@ const mainMenuTemplate = [
         label: 'Add Item',
         click: () => {
           createAddWindow();
-          // addWindow.on('close', () => {
-          //   addWindow = null;
-          // })
-          ipcMain.on('item:add', (e, item) => {
-            mainWindow.webContents.send('item:add', item);
-            // addWindow.close();
 
-          });
-
-          // Garbage remove
-          // 
         }
       },
       {
