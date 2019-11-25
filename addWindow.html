@@ -10,13 +10,18 @@
     />
   </head>
   <body>
-    <form>
-      <div class="mt-2 ml-2">
-        <label class="mt-0 ml-2">Enter Item</label>
-        <input class="mt-2 ml-2" type="text" id="shoppingItem" autofocus
-      </div>
-      <button class="mt-2 ml-2" type="submit">Add item</button>
-    </form>
+    <div class="container">
+      <form>
+        <div class="mt-2 ml-2">
+          <label class="mt-0 ml-2">Enter Item</label>
+          <input class="mt-2 ml-2" type="text" id="shoppingItem" autofocus
+        </div>
+        <button class="btn btn-warning mt-2 ml-2" type="submit">
+          Add item
+        </button>
+      </form>
+    </div>
+
     <script>
       const electron = require("electron");
       const { ipcRenderer } = electron;

@@ -24,7 +24,7 @@
 
       ipcRenderer.on("item:add", (e, item) => {
         const liShopping = document.createElement("li");
-        liShopping.classList.add("list-group-item-success");
+        liShopping.classList.add("list-group-item-warning");
         const itemText = document.createTextNode(item);
         liShopping.appendChild(itemText);
         ulShopping.appendChild(liShopping);
